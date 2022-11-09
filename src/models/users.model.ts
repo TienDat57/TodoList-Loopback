@@ -1,5 +1,5 @@
 import {Entity, hasMany, model, property} from '@loopback/repository';
-import {Role} from './../enums/role.enum';
+import {ERole} from './../enums/role.enum';
 import {Task} from './tasks.model';
 import {UserProject} from './userProject.model';
 
@@ -27,10 +27,10 @@ export class User extends Entity {
   @property({
     type: 'string',
     jsonSchema: {
-      enum: Object.values(Role),
+      enum: Object.values(ERole),
     },
   })
-  role?: Role;
+  role?: ERole;
 
   @hasMany(() => Task)
   tasks: Task[];

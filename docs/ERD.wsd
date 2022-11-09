@@ -3,68 +3,73 @@
 skinparam linetype ortho
 
 entity Project {
-  + id : string <<generated>>
+  - id : ObjectId <<generated>>
   --
-  + name : string
-  + description : string
-  + createdAt: date
-  + updatedAt: date
-  + isDeleted: boolean
-  + updatedBy: userId <<FK>>
-  + createdBy: userId <<FK>>
+  ~ updatedBy: ObjectId <<FK>>
+  ~ createdBy: ObjectId <<FK>>
+  --
+  * name : String
+  + description : String
+  + createdAt: Date
+  + updatedAt: Date
+  + isDeleted: Boolean
 }
 
 entity User {
-  + id : string <<generated>>
+  - id : ObjectId <<generated>>
   --
-  + email : string
-  + password : string
-  + role : Role
+  * email : String
+  * password : String
+  + createdAt: Date
+  + updatedAt: Date
 }
 
 entity Task {
-  + id : string <<generated>>
+  - id : ObjectId <<generated>>
   --
-  + name : string
-  + description : string
-  + status: TaskStatus
-  + isCreatedByAdmin: boolean
-  + createdBy: userId
-  + updatedBy: userId
-  + createdAt: date
-  + updatedAt: date
-  + isDeleted: boolean
-  + linkedTo: taskId <<FK>>
-  + projectId: string <<FK>>
-  + userId: string <<FK>>
+  ~ createdBy: ObjectId <<FK>>
+  ~ updatedBy: ObjectId <<FK>>
+  ~ linkedTo: ObjectId <<FK>>
+  ~ projectId: ObjectId <<FK>>
+  ~ assignTo: ObjectId <<FK>>
+  --
+  * name : ObjectId
+  + description : String
+  + status: ETaskStatus
+  * isCreatedByAdmin: Boolean
+  + createdAt: Date
+  + updatedAt: Date
+  + isDeleted: Boolean
 }
 
-enum Role {
+entity ProjectUser {
+  - id : ObjectId <<generated>>
+  --
+  ~ projectId: ObjectId <<FK>>
+  ~ userId: ObjectId <<FK>>
+  --
+  * role : EUserRole
+}
+
+enum EUserRole {
   + ADMIN
   + USER
 }
 
-enum TaskStatus {
-  + To Do
-  + Doing
-  + Done
+enum ETaskStatus {
+  + TODO
+  + DOING
+  + DONE
 }
 
-entity UserProject {
-  + id : string <<generated>>
-  --
-  + projectId: string <<FK>>
-  + userId: string <<FK>>
-}
+Task -- ETaskStatus
 
-Task--TaskStatus
-
-User -- Role
+ProjectUser -- EUserRole
 
 Task ||--||Task
 
-UserProject }|--|| User
-UserProject }|--|| Project
+ProjectUser }|--|| User
+ProjectUser }|--|| Project
 
 Task }|--|| Project
 Task }|--|| User

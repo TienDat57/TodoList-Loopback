@@ -1,7 +1,7 @@
-import {Entity, model, property, belongsTo} from '@loopback/repository';
+import {belongsTo, Entity, model, property} from '@loopback/repository';
+import {ETaskStatus} from '../enums';
 import {Project} from './projects.model';
 import {User} from './users.model';
-import { TaskStatus } from '../enums';
 
 @model()
 export class Task extends Entity {
@@ -30,7 +30,7 @@ export class Task extends Entity {
 
   @property({
     type: 'string',
-    default: TaskStatus.TODO
+    default: ETaskStatus.TODO
   })
   status?: string;
 
