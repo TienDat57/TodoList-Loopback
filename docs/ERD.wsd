@@ -1,0 +1,71 @@
+@startuml TodoList-Loopback
+
+skinparam linetype ortho
+
+entity Project {
+  + id : string <<generated>>
+  --
+  + name : string
+  + description : string
+  + createdAt: date
+  + updatedAt: date
+  + isDeleted: boolean
+  + updatedBy: userId <<FK>>
+  + createdBy: userId <<FK>>
+}
+
+entity User {
+  + id : string <<generated>>
+  --
+  + email : string
+  + password : string
+  + role : Role
+}
+
+enum Role {
+  + ADMIN
+  + USER
+}
+
+entity Task {
+  + id : string <<generated>>
+  --
+  + name : string
+  + description : string
+  + status: TaskStatus
+  + isCreatedByAdmin: boolean
+  + createdBy: userId
+  + updatedBy: userId
+  + createdAt: date
+  + updatedAt: date
+  + isDeleted: boolean
+  + linkedTo: taskId <<FK>>
+  + projectId: string <<FK>>
+  + userId: string <<FK>>
+}
+
+enum TaskStatus {
+  +Doing
+  +Done
+}
+
+entity UserProject {
+  + id : string <<generated>>
+  --
+  + projectId: string <<FK>>
+  + userId: string <<FK>>
+}
+
+Task--TaskStatus
+
+User -- Role
+
+UserProject }|--|| User
+UserProject }|--|| Project
+
+Task ||--||Task
+
+Task }|--|| Project
+Task }|--|| User
+
+@enduml
