@@ -22,11 +22,6 @@ entity User {
   + role : Role
 }
 
-enum Role {
-  + ADMIN
-  + USER
-}
-
 entity Task {
   + id : string <<generated>>
   --
@@ -44,9 +39,15 @@ entity Task {
   + userId: string <<FK>>
 }
 
+enum Role {
+  + ADMIN
+  + USER
+}
+
 enum TaskStatus {
-  +Doing
-  +Done
+  + To Do
+  + Doing
+  + Done
 }
 
 entity UserProject {
@@ -60,10 +61,10 @@ Task--TaskStatus
 
 User -- Role
 
+Task ||--||Task
+
 UserProject }|--|| User
 UserProject }|--|| Project
-
-Task ||--||Task
 
 Task }|--|| Project
 Task }|--|| User
