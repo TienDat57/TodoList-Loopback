@@ -3,12 +3,19 @@ import {Project} from './projects.model';
 import {User} from './users.model';
 import {EUserRole} from '../enums';
 
-@model()
+@model({
+  settings: {
+    mongodb: {
+      collection: 'ProjectUserCollection',
+    },
+  },
+})
 export class ProjectUser extends Entity {
   @property({
     type: 'string',
     id: true,
     generated: true,
+    mongodb: {dataType: 'ObjectId'},
   })
   id?: string;
 

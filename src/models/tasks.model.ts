@@ -3,12 +3,19 @@ import { ETaskStatus } from '../enums';
 import { Project } from './projects.model';
 import { User } from './users.model';
 
-@model()
+@model({
+  settings: {
+    mongodb: {
+      collection: 'TaskCollection',
+    },
+  },
+})
 export class Task extends Entity {
   @property({
     type: 'string',
     id: true,
     generated: true,
+    mongodb: {dataType: 'ObjectId'},
   })
   id?: string;
 

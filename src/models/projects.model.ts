@@ -2,12 +2,19 @@ import {Entity, hasMany, model, property} from '@loopback/repository';
 import {Task} from './tasks.model';
 import {ProjectUser} from './userProject.model';
 
-@model()
+@model({
+  settings: {
+    mongodb: {
+      collection: 'ProjectCollection',
+    },
+  },
+})
 export class Project extends Entity {
   @property({
     type: 'string',
     id: true,
     generated: true,
+    mongodb: {dataType: 'ObjectId'},
   })
   id?: string;
 
