@@ -1,9 +1,10 @@
-import {Entity, model, property, belongsTo} from '@loopback/repository';
+import {belongsTo, Entity, model, property} from '@loopback/repository';
 import {Project} from './projects.model';
 import {User} from './users.model';
+import {EUserRole} from '../enums';
 
 @model()
-export class UserProject extends Entity {
+export class ProjectUser extends Entity {
   @property({
     type: 'string',
     id: true,
@@ -11,18 +12,25 @@ export class UserProject extends Entity {
   })
   id?: string;
 
+  @property({
+    type: 'string',
+    jsonSchema: {
+      enum: Object.values(EUserRole),
+    },
+  })
+  role?: string;
+
   @belongsTo(() => Project)
   projectId: string;
 
   @belongsTo(() => User)
   userId: string;
 
-  constructor(data?: Partial<UserProject>) {
+  constructor(data?: Partial<ProjectUser>) {
     super(data);
   }
 }
 
-export interface UserProjectRelations {
-}
+export interface UserProjectRelations { }
 
-export type UserProjectWithRelations = UserProject & UserProjectRelations;
+export type UserProjectWithRelations = ProjectUser & UserProjectRelations;

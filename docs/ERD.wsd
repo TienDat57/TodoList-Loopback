@@ -34,9 +34,9 @@ entity Task {
   ~ assignTo: ObjectId <<FK>>
   --
   * name : ObjectId
+  * isCreatedByAdmin: Boolean
   + description : String
   + status: ETaskStatus
-  * isCreatedByAdmin: Boolean
   + createdAt: Date
   + updatedAt: Date
   + isDeleted: Boolean

@@ -1,7 +1,7 @@
-import {belongsTo, Entity, model, property} from '@loopback/repository';
-import {ETaskStatus} from '../enums';
-import {Project} from './projects.model';
-import {User} from './users.model';
+import { belongsTo, Entity, model, property } from '@loopback/repository';
+import { ETaskStatus } from '../enums';
+import { Project } from './projects.model';
+import { User } from './users.model';
 
 @model()
 export class Task extends Entity {
@@ -20,6 +20,7 @@ export class Task extends Entity {
 
   @property({
     type: 'boolean',
+    required: true,
   })
   isCreatedByAdmin?: boolean;
 

@@ -1,7 +1,6 @@
-import {Entity, hasMany, model, property} from '@loopback/repository';
-import {ERole} from './../enums/role.enum';
-import {Task} from './tasks.model';
-import {UserProject} from './userProject.model';
+import { Entity, hasMany, model, property } from '@loopback/repository';
+import { Task } from './tasks.model';
+import { ProjectUser } from './userProject.model';
 
 @model()
 export class User extends Entity {
@@ -16,7 +15,7 @@ export class User extends Entity {
     type: 'string',
     required: true,
   })
-  userName: string;
+  email: string;
 
   @property({
     type: 'string',
@@ -24,19 +23,11 @@ export class User extends Entity {
   })
   password: string;
 
-  @property({
-    type: 'string',
-    jsonSchema: {
-      enum: Object.values(ERole),
-    },
-  })
-  role?: ERole;
-
   @hasMany(() => Task)
   tasks: Task[];
 
-  @hasMany(() => UserProject)
-  userProjects: UserProject[];
+  @hasMany(() => ProjectUser)
+  userProjects: ProjectUser[];
 
   constructor(data?: Partial<User>) {
     super(data);
