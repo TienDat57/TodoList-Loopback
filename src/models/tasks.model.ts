@@ -1,7 +1,7 @@
-import { belongsTo, Entity, model, property } from '@loopback/repository';
-import { ETaskStatus } from '../enums';
-import { Project } from './projects.model';
-import { User } from './users.model';
+import {belongsTo, Entity, model, property} from '@loopback/repository';
+import {ETaskStatus} from '../enums';
+import {Project} from './projects.model';
+import {Users} from './users.model';
 
 @model({
   settings: {
@@ -10,7 +10,7 @@ import { User } from './users.model';
     },
   },
 })
-export class Task extends Entity {
+export class Tasks extends Entity {
   @property({
     type: 'string',
     id: true,
@@ -73,13 +73,13 @@ export class Task extends Entity {
   @belongsTo(() => Project, {name: 'ofProject'})
   projectId: string;
 
-  @belongsTo(() => User, {name: 'assignedTo'})
+  @belongsTo(() => Users, {name: 'assignedTo'})
   userId: string;
 
-  @belongsTo(() => Task, {name: 'linkedTo'})
+  @belongsTo(() => Tasks, {name: 'linkedTo'})
   linkedTo: string;
 
-  constructor(data?: Partial<Task>) {
+  constructor(data?: Partial<Tasks>) {
     super(data);
   }
 }
@@ -87,4 +87,4 @@ export class Task extends Entity {
 export interface TaskRelations {
 }
 
-export type TaskWithRelations = Task & TaskRelations;
+export type TaskWithRelations = Tasks & TaskRelations;

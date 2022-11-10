@@ -1,7 +1,17 @@
-import { inject } from '@loopback/core';
-import { Request, RestBindings, ResponseObject, post } from '@loopback/rest';
+import {inject} from '@loopback/core';
+import {post, requestBody, ResponseObject} from '@loopback/rest';
+import {CAuthenticate} from './router';
 
-const AUTHENTICATE : ResponseObject = {
+import {TokenService} from '@loopback/authentication';
+import {
+  MyUserService, TokenServiceBindings, UserRepository, UserServiceBindings
+} from '@loopback/authentication-jwt';
+import {repository} from '@loopback/repository';
+import {SecurityBindings, UserProfile} from '@loopback/security';
+
+import {Users} from '../models';
+
+const AUTHENTICATE: ResponseObject = {
   description: 'Authenticate Response',
   content: {
     'application/json': {
@@ -26,34 +36,29 @@ const AUTHENTICATE : ResponseObject = {
 };
 
 export class AuthenticateController {
-  constructor(@inject(RestBindings.Http.REQUEST) private req: Request) {}
+  constructor(
+    @inject(TokenServiceBindings.TOKEN_SERVICE)
+    public jwtService: TokenService,
+    @inject(UserServiceBindings.USER_SERVICE)
+    public userService: MyUserService,
+    @inject(SecurityBindings.USER, {optional: true})
+    public user: UserProfile,
+    @repository(UserRepository) protected userRepository: UserRepository,
+  ) { }
 
-  @post('/auth/login', {
+  @post(CAuthenticate.REGISTER, {
     responses: {
       '200': AUTHENTICATE,
     },
   })
-  async login(): Promise<object> {
-    return {
-      greeting: 'Hello from Login',
-      date: new Date(),
-      url: this.req.url,
-      headers: Object.assign({}, this.req.headers),
-    };
-  }
-
-  @post('/auth/register', {
-    responses: {
-      '200': AUTHENTICATE,
-    },
-  })
-  async register(): Promise<object> {
-    return {
-      greeting: 'Hello from register',
-      date: new Date(),
-      url: this.req.url,
-      headers: Object.assign({}, this.req.headers),
-    };
+  async register(
+    @requestBody() user: Users,
+  ): Promise<object> {
+    const savedUser = await this.userRepository.create(user);
+    const userProfile = this.userService.convertToUserProfile(savedUser);
+    const token = await this.jwtService.generateToken(userProfile);
+    return {token};
   }
 }
+
 

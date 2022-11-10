@@ -1,6 +1,6 @@
-import { Entity, hasMany, model, property } from '@loopback/repository';
-import { Task } from './tasks.model';
-import { ProjectUser } from './userProject.model';
+import {Entity, hasMany, model, property} from '@loopback/repository';
+import {ProjectsUser} from './projectsUser.model';
+import {Tasks} from './tasks.model';
 
 @model({
   settings: {
@@ -9,7 +9,7 @@ import { ProjectUser } from './userProject.model';
     },
   },
 })
-export class User extends Entity {
+export class Users extends Entity {
   @property({
     type: 'string',
     id: true,
@@ -30,13 +30,13 @@ export class User extends Entity {
   })
   password: string;
 
-  @hasMany(() => Task)
-  tasks: Task[];
+  @hasMany(() => Tasks)
+  tasks: Tasks[];
 
-  @hasMany(() => ProjectUser)
-  userProjects: ProjectUser[];
+  @hasMany(() => ProjectsUser)
+  userProjects: ProjectsUser[];
 
-  constructor(data?: Partial<User>) {
+  constructor(data?: Partial<Users>) {
     super(data);
   }
 }
@@ -44,4 +44,4 @@ export class User extends Entity {
 export interface UserRelations {
 }
 
-export type UserWithRelations = User & UserRelations;
+export type UserWithRelations = Users & UserRelations;

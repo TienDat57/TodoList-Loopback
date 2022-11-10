@@ -10,6 +10,14 @@ import {ServiceMixin} from '@loopback/service-proxy';
 import path from 'path';
 import {MySequence} from './sequence';
 
+import {AuthenticationComponent} from '@loopback/authentication';
+import {
+  JWTAuthenticationComponent,
+  SECURITY_SCHEME_SPEC,
+  UserServiceBindings,
+} from '@loopback/authentication-jwt';
+import {MongoDataSource} from './datasources';
+
 export {ApplicationConfig};
 
 export class GettingStartedApplication extends BootMixin(
@@ -40,5 +48,25 @@ export class GettingStartedApplication extends BootMixin(
         nested: true,
       },
     };
+
+    // ------ ADD SNIPPET AT THE BOTTOM ---------
+    // Mount authentication system
+    this.component(AuthenticationComponent);
+    // Mount jwt component
+    this.component(JWTAuthenticationComponent);
+    // Bind datasource
+    this.dataSource(MongoDataSource, UserServiceBindings.DATASOURCE_NAME);
+    // Add security spec
+    this.addSecuritySpec();
+  }
+  addSecuritySpec() {
+    this.api({
+      openapi: '3.0.0',
+      info: {title: 'TodoLoopback', version: '1.0.0'},
+      paths: {},
+      components: {securitySchemes: SECURITY_SCHEME_SPEC},
+      security: [{jwt: []}],
+      servers: [{url: '/'}],
+    });
   }
 }
