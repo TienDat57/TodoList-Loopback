@@ -1,4 +1,6 @@
-import {repository} from '@loopback/repository';
+import {
+  repository,
+} from '@loopback/repository';
 import {inject} from '@loopback/core';
 import {
   post,
@@ -13,16 +15,16 @@ import {
   TokenServiceBindings,
   UserServiceBindings,
 } from '../keys';
+import {User} from '../models';
 import {
   Credentials,
   UserRepository,
 } from '../repositories';
 import {validateCredentials, JWTService, MyUserService, BcryptHasher} from '../services';
 import {CredentialsRequestBody} from '../types/credential-schema';
-import {User} from '../models';
 import {CAuthenticate} from './router';
 
-export class AuthController {
+export class AuthenticateController {
   constructor(
     @repository(UserRepository)
     public userRepository: UserRepository,
@@ -37,7 +39,7 @@ export class AuthController {
   @post(CAuthenticate.REGISTER, {
     responses: {
       '200': {
-        description: 'Sign up a new user',
+        description: 'Register a new user',
         content: {'application/json': {schema: getModelSchemaRef(User)}},
       },
     },
@@ -81,7 +83,7 @@ export class AuthController {
   @post(CAuthenticate.LOGIN, {
     responses: {
       '200': {
-        description: 'Token',
+        description: 'Login a user',
         content: {
           'application/json': {
             schema: {
@@ -106,5 +108,4 @@ export class AuthController {
     const token = await this.jwtService.generateToken(userProfile);
     return Promise.resolve({token});
   }
-
 }

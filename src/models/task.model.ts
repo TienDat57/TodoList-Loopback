@@ -1,10 +1,10 @@
-import {belongsTo, Entity, model, property} from '@loopback/repository';
-import {ETaskStatus} from '../enum';
-import {Project} from './project.model';
+import {Entity, model, property, belongsTo} from '@loopback/repository';
 import {User} from './user.model';
+import {Project} from './project.model';
+import {ETaskStatus} from '../enum';
 
 @model()
-export class Tasks extends Entity {
+export class Task extends Entity {
   @property({
     type: 'string',
     id: true,
@@ -37,20 +37,10 @@ export class Tasks extends Entity {
   status?: string;
 
   @property({
-    type: 'string',
-  })
-  createdBy: string;
-
-  @property({
     type: 'date',
     default: () => new Date(),
   })
   createdAt: string;
-
-  @property({
-    type: 'string',
-  })
-  updatedBy: string;
 
   @property({
     type: 'date',
@@ -64,16 +54,22 @@ export class Tasks extends Entity {
   })
   isDeleted?: boolean;
 
-  @belongsTo(() => Project, {name: 'ofProject'})
-  projectId: string;
+  @belongsTo(() => User, {name: 'creator'})
+  createdBy: string;
 
-  @belongsTo(() => User, {name: 'assignedTo'})
-  userId: string;
+  @belongsTo(() => User, {name: 'updater'})
+  updatedBy: string;
 
-  @belongsTo(() => Tasks, {name: 'linkedTo'})
+  @belongsTo(() => Task, {name: 'linked'})
   linkedTo: string;
 
-  constructor(data?: Partial<Tasks>) {
+  @belongsTo(() => Project)
+  projectId: string;
+
+  @belongsTo(() => User, {name: 'assignee'})
+  asignedTo: string;
+
+  constructor(data?: Partial<Task>) {
     super(data);
   }
 }
@@ -82,4 +78,4 @@ export interface TaskRelations {
   // describe navigational properties here
 }
 
-export type TaskWithRelations = Tasks & TaskRelations;
+export type TaskWithRelations = Task & TaskRelations;

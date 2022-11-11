@@ -1,35 +1,34 @@
 import {Getter, inject} from '@loopback/core';
 import {BelongsToAccessor, DefaultCrudRepository, repository} from '@loopback/repository';
 import {MongoDataSource} from '../datasources';
-import {Project, TaskRelations, Tasks, User} from '../models';
+import {Task, TaskRelations, User, Project} from '../models';
+import { UserRepository } from './user.repository';
 import {ProjectRepository} from './project.repository';
-import {UserRepository} from './user.repository';
 
 export class TaskRepository extends DefaultCrudRepository<
-  Tasks,
-  typeof Tasks.prototype.id,
+  Task,
+  typeof Task.prototype.id,
   TaskRelations
 > {
+  public readonly assignee: BelongsToAccessor<User, typeof Task.prototype.id>;
 
-  public readonly project: BelongsToAccessor<Project, typeof Tasks.prototype.id>;
+  public readonly creator: BelongsToAccessor<User, typeof Task.prototype.id>;
 
-  public readonly user: BelongsToAccessor<User, typeof Tasks.prototype.id>;
+  public readonly project: BelongsToAccessor<Project, typeof Task.prototype.id>;
 
-  public readonly linkedToTask: BelongsToAccessor<Tasks, typeof Tasks.prototype.id>;
+  public readonly linked: BelongsToAccessor<Task, typeof Task.prototype.id>;
 
   constructor(
-    @inject('datasources.MongoDB') dataSource: MongoDataSource, @repository.getter('ProjectRepository') protected projectRepositoryGetter: Getter<ProjectRepository>, @repository.getter('UserRepository') protected userRepositoryGetter: Getter<UserRepository>, @repository.getter('TaskRepository') protected taskRepositoryGetter: Getter<TaskRepository>,
+    @inject('datasources.MongoDB') dataSource: MongoDataSource, @repository.getter('UserRepository') protected userRepositoryGetter: Getter<UserRepository>, @repository.getter('ProjectRepository') protected projectRepositoryGetter: Getter<ProjectRepository>, @repository.getter('TaskRepository') protected taskRepositoryGetter: Getter<TaskRepository>,
   ) {
-    super(Tasks, dataSource);
-    this.linkedToTask = this.createBelongsToAccessorFor(
-      'linkedToo',
-      Getter.fromValue(this),
-    ); // for recursive relationship
-    this.registerInclusionResolver('linkedToo', this.linkedToTask.inclusionResolver);
-
-    this.user = this.createBelongsToAccessorFor('assignedTo', userRepositoryGetter,);
-    this.registerInclusionResolver('assignedTo', this.user.inclusionResolver);
-    this.project = this.createBelongsToAccessorFor('ofProject', projectRepositoryGetter,);
-    this.registerInclusionResolver('ofProject', this.project.inclusionResolver);
+    super(Task, dataSource);
+    this.linked = this.createBelongsToAccessorFor('linked', taskRepositoryGetter,);
+    this.registerInclusionResolver('linked', this.linked.inclusionResolver);
+    this.project = this.createBelongsToAccessorFor('project', projectRepositoryGetter,);
+    this.registerInclusionResolver('project', this.project.inclusionResolver);
+    this.creator = this.createBelongsToAccessorFor('creator', userRepositoryGetter,);
+    this.registerInclusionResolver('creator', this.creator.inclusionResolver);
+    this.assignee = this.createBelongsToAccessorFor('assignee', userRepositoryGetter,);
+    this.registerInclusionResolver('assignee', this.assignee.inclusionResolver);
   }
 }

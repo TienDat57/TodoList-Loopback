@@ -7,6 +7,7 @@ import {
   Where,
 } from '@loopback/repository';
 import {
+  post,
   param,
   get,
   getModelSchemaRef,
@@ -16,7 +17,6 @@ import {
   requestBody,
   response,
 } from '@loopback/rest';
-
 import {User} from '../models';
 import {UserRepository} from '../repositories';
 

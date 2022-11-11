@@ -62,7 +62,7 @@ export class TodoApplication extends BootMixin(
     this.api({
       openapi: '3.0.0',
       info: {
-        title: 'test application',
+        title: 'Todo list API',
         version: '1.0.0',
       },
       paths: {},
