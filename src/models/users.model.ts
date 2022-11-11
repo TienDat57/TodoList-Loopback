@@ -30,6 +30,16 @@ export class Users extends Entity {
   })
   password: string;
 
+  @property({
+    type: 'Date',
+  })
+  createdAt: Date;
+
+  @property({
+    type: 'Date',
+  })
+  updatedAt: Date;
+
   @hasMany(() => Tasks)
   tasks: Tasks[];
 
