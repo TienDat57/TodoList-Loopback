@@ -18,6 +18,6 @@ export class BcryptHasher implements PasswordHasher<string> {
 
   async hashPassword(password: string): Promise<string> {
     const salt = await genSalt(this.rounds);
-    return hash(password, salt);
+    return await hash(password, salt);
   }
 }

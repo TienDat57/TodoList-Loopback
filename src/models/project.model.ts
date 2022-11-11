@@ -1,14 +1,8 @@
 import {Entity, hasMany, model, property} from '@loopback/repository';
-import {ProjectsUser} from './projectsUser.model';
-import {Tasks} from './tasks.model';
+import {ProjectsUser} from './projectUser.model';
+import {Tasks} from './task.model';
 
-@model({
-  settings: {
-    mongodb: {
-      collection: 'ProjectCollection',
-    },
-  },
-})
+@model()
 export class Project extends Entity {
   @property({
     type: 'string',
@@ -58,10 +52,10 @@ export class Project extends Entity {
   isDeleted?: boolean;
 
   @hasMany(() => Tasks)
-  tasks: Tasks[];
+  task: Tasks[];
 
   @hasMany(() => ProjectsUser)
-  userProjects: ProjectsUser[];
+  projectUser: ProjectsUser[];
 
   constructor(data?: Partial<Project>) {
     super(data);
@@ -69,6 +63,7 @@ export class Project extends Entity {
 }
 
 export interface ProjectRelations {
+  // describe navigational properties here
 }
 
 export type ProjectWithRelations = Project & ProjectRelations;

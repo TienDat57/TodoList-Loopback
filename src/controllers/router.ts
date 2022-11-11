@@ -6,7 +6,7 @@ const CAuthenticate = {
 }
 
 const CProject = {
-  PROJECTS: '/projects',
+  CREATE: '/projects',
   TASKS_OF_PROJECT: '/projects/{projectId}/tasks',
   USER_PROJECTS_IN_PROJECT: '/projects/{projectId}/user-projects',
   COUNT_PROJECTS: '/projects/count',
@@ -14,7 +14,7 @@ const CProject = {
 }
 
 const CTask = {
-  TASKS: '/tasks',
+  CREATE: '/tasks',
   COUNT_TASKS: '/tasks/count',
   TASKS_BY_ID: '/tasks/{taskId}',
   TASK_BELONGS_TO_PROJECT: '/tasks/{taskId}/project',
@@ -23,7 +23,7 @@ const CTask = {
 }
 
 const CUser = {
-  USERS: '/users',
+  CREATE: '/users',
   COUNT_USERS: '/users/count',
   USERS_BY_ID: '/users/{id}',
   USER_PROJECTS_IN_USER: '/users/{userId}/user-projects',

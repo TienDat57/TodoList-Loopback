@@ -1,15 +1,9 @@
 import {belongsTo, Entity, model, property} from '@loopback/repository';
-import {ETaskStatus} from '../enums';
-import {Project} from './projects.model';
-import {Users} from './users.model';
+import {ETaskStatus} from '../enum';
+import {Project} from './project.model';
+import {User} from './user.model';
 
-@model({
-  settings: {
-    mongodb: {
-      collection: 'TaskCollection',
-    },
-  },
-})
+@model()
 export class Tasks extends Entity {
   @property({
     type: 'string',
@@ -73,7 +67,7 @@ export class Tasks extends Entity {
   @belongsTo(() => Project, {name: 'ofProject'})
   projectId: string;
 
-  @belongsTo(() => Users, {name: 'assignedTo'})
+  @belongsTo(() => User, {name: 'assignedTo'})
   userId: string;
 
   @belongsTo(() => Tasks, {name: 'linkedTo'})
@@ -85,6 +79,7 @@ export class Tasks extends Entity {
 }
 
 export interface TaskRelations {
+  // describe navigational properties here
 }
 
 export type TaskWithRelations = Tasks & TaskRelations;

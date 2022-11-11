@@ -1,10 +1,10 @@
-import {GettingStartedApplication} from './application';
+import {TodoApplication} from './application';
 
 export async function migrate(args: string[]) {
   const existingSchema = args.includes('--rebuild') ? 'drop' : 'alter';
   console.log('Migrating schemas (%s existing schema)', existingSchema);
 
-  const app = new GettingStartedApplication();
+  const app = new TodoApplication();
   await app.boot();
   await app.migrateSchema({existingSchema});
 

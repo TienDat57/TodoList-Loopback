@@ -1,13 +1,8 @@
 
 import { HttpErrors } from '@loopback/rest';
-import * as isEmail from 'isemail';
-import { Credentials } from '../repositories/users.repository';
-import { UsersRepository } from '../repositories/users.repository';
+import { Credentials, UserRepository } from '../repositories/user.repository';
 
-export async function validateCredentials(credentials: Credentials, userRepository: UsersRepository) {
-  if (!isEmail.validate(credentials.email)) {
-    throw new HttpErrors.UnprocessableEntity('invalid Email');
-  }
+export async function validateCredentials(credentials: Credentials, userRepository: UserRepository) {
   const foundUser = await userRepository.findOne({
     where: {
       email: credentials.email
@@ -23,4 +18,3 @@ export async function validateCredentials(credentials: Credentials, userReposito
     throw new HttpErrors.UnprocessableEntity("passwordd length should be greater than 8")
   }
 }
-

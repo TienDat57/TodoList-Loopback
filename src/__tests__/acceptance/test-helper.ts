@@ -1,4 +1,4 @@
-import {GettingStartedApplication} from '../..';
+import {TodoApplication} from '../..';
 import {
   createRestAppClient,
   givenHttpServerConfig,
@@ -14,7 +14,7 @@ export async function setupApplication(): Promise<AppWithClient> {
     // port: +process.env.PORT,
   });
 
-  const app = new GettingStartedApplication({
+  const app = new TodoApplication({
     rest: restConfig,
   });
 
@@ -27,6 +27,6 @@ export async function setupApplication(): Promise<AppWithClient> {
 }
 
 export interface AppWithClient {
-  app: GettingStartedApplication;
+  app: TodoApplication;
   client: Client;
 }

@@ -15,11 +15,11 @@ const config = {
 @lifeCycleObserver('datasource')
 export class MongoDataSource extends juggler.DataSource
   implements LifeCycleObserver {
-  static dataSourceName = 'db';
+  static dataSourceName = 'MongoDB';
   static readonly defaultConfig = config;
 
   constructor(
-    @inject('datasources.config.db', {optional: true})
+    @inject('datasources.config.MongoDB', {optional: true})
     dsConfig: object = config,
   ) {
     super(dsConfig);

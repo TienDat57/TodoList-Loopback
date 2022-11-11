@@ -1,5 +1,4 @@
-export * from './projects.model';
-export * from './projectsUser.model';
-export * from './tasks.model';
-export * from './users.model';
-
+export * from './user.model';
+export * from './project.model';
+export * from './task.model';
+export * from './projectUser.model';

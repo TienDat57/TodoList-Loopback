@@ -1,9 +1,9 @@
 import {Getter, inject} from '@loopback/core';
 import {BelongsToAccessor, DefaultCrudRepository, repository} from '@loopback/repository';
 import {MongoDataSource} from '../datasources';
-import {Project, TaskRelations, Tasks, Users} from '../models';
-import {ProjectRepository} from './projects.repository';
-import {UsersRepository} from './users.repository';
+import {Project, TaskRelations, Tasks, User} from '../models';
+import {ProjectRepository} from './project.repository';
+import {UserRepository} from './user.repository';
 
 export class TaskRepository extends DefaultCrudRepository<
   Tasks,
@@ -13,12 +13,12 @@ export class TaskRepository extends DefaultCrudRepository<
 
   public readonly project: BelongsToAccessor<Project, typeof Tasks.prototype.id>;
 
-  public readonly user: BelongsToAccessor<Users, typeof Tasks.prototype.id>;
+  public readonly user: BelongsToAccessor<User, typeof Tasks.prototype.id>;
 
   public readonly linkedToTask: BelongsToAccessor<Tasks, typeof Tasks.prototype.id>;
 
   constructor(
-    @inject('datasources.db') dataSource: MongoDataSource, @repository.getter('ProjectRepository') protected projectRepositoryGetter: Getter<ProjectRepository>, @repository.getter('UserRepository') protected userRepositoryGetter: Getter<UsersRepository>, @repository.getter('TaskRepository') protected taskRepositoryGetter: Getter<TaskRepository>,
+    @inject('datasources.MongoDB') dataSource: MongoDataSource, @repository.getter('ProjectRepository') protected projectRepositoryGetter: Getter<ProjectRepository>, @repository.getter('UserRepository') protected userRepositoryGetter: Getter<UserRepository>, @repository.getter('TaskRepository') protected taskRepositoryGetter: Getter<TaskRepository>,
   ) {
     super(Tasks, dataSource);
     this.linkedToTask = this.createBelongsToAccessorFor(

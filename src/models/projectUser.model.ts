@@ -1,15 +1,9 @@
 import {belongsTo, Entity, model, property} from '@loopback/repository';
-import {EUserRole} from '../enums';
-import {Project} from './projects.model';
-import {Users} from './users.model';
+import {EUserRole} from '../enum';
+import {Project} from './project.model';
+import {User} from './user.model';
 
-@model({
-  settings: {
-    mongodb: {
-      collection: 'ProjectUserCollection',
-    },
-  },
-})
+@model()
 export class ProjectsUser extends Entity {
   @property({
     type: 'string',
@@ -30,7 +24,7 @@ export class ProjectsUser extends Entity {
   @belongsTo(() => Project)
   projectId: string;
 
-  @belongsTo(() => Users)
+  @belongsTo(() => User)
   userId: string;
 
   constructor(data?: Partial<ProjectsUser>) {
@@ -38,6 +32,6 @@ export class ProjectsUser extends Entity {
   }
 }
 
-export interface UserProjectRelations { }
+export interface ProjectUserRelations { }
 
-export type UserProjectWithRelations = ProjectsUser & UserProjectRelations;
+export type UserProjectWithRelations = ProjectsUser & ProjectUserRelations;

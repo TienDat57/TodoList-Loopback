@@ -1,15 +1,9 @@
 import {Entity, hasMany, model, property} from '@loopback/repository';
-import {ProjectsUser} from './projectsUser.model';
-import {Tasks} from './tasks.model';
+import {ProjectsUser} from './projectUser.model';
+import {Tasks} from './task.model';
 
-@model({
-  settings: {
-    mongodb: {
-      collection: 'UserCollection',
-    },
-  },
-})
-export class Users extends Entity {
+@model()
+export class User extends Entity {
   @property({
     type: 'string',
     id: true,
@@ -46,7 +40,7 @@ export class Users extends Entity {
   @hasMany(() => ProjectsUser)
   userProjects: ProjectsUser[];
 
-  constructor(data?: Partial<Users>) {
+  constructor(data?: Partial<User>) {
     super(data);
   }
 }
@@ -54,4 +48,4 @@ export class Users extends Entity {
 export interface UserRelations {
 }
 
-export type UserWithRelations = Users & UserRelations;
+export type UserWithRelations = User & UserRelations;

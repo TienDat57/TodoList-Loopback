@@ -1,83 +1,68 @@
-import {inject} from '@loopback/core';
-import {get, getModelSchemaRef, HttpErrors, post, requestBody, ResponseObject} from '@loopback/rest';
 import {repository} from '@loopback/repository';
-import {SecurityBindings,securityId, UserProfile} from '@loopback/security';
-import {OPERATION_SECURITY_SPEC, TokenServiceBindings, UserServiceBindings} from '@loopback/authentication-jwt';
-
-import {CAuthenticate} from './router';
-import {Users} from '../models';
-import {Credentials, UsersRepository} from '../repositories';
+import {inject} from '@loopback/core';
 import {
-  BcryptHasher,
-  JWTService,
-  MyUserService,
-  validateCredentials,
-} from '../services';
-import { CredentialsRequestBody } from '../services/credentialRequestBody';
-import _ from 'lodash';
-import {authenticate} from '@loopback/authentication';
+  post,
+  getModelSchemaRef,
+  requestBody,
+  HttpErrors,
+} from '@loopback/rest';
+import * as _ from 'lodash';
 
-const AUTHENTICATE: ResponseObject = {
-  description: 'Authenticate Response',
-  content: {
-    'application/json': {
-      schema: {
-        type: 'object',
-        title: 'AuthenticateResponse',
-        properties: {
-          greeting: {type: 'string'},
-          date: {type: 'string'},
-          url: {type: 'string'},
-          headers: {
-            type: 'object',
-            properties: {
-              'Content-Type': {type: 'string'},
-            },
-            additionalProperties: true,
-          },
-        },
-      },
-    },
-  },
-};
+import {
+  PasswordHasherBindings,
+  TokenServiceBindings,
+  UserServiceBindings,
+} from '../keys';
+import {
+  Credentials,
+  UserRepository,
+} from '../repositories';
+import {validateCredentials, JWTService, MyUserService, BcryptHasher} from '../services';
+import {CredentialsRequestBody} from '../types/credential-schema';
+import {User} from '../models';
+import {CAuthenticate} from './router';
 
-export class AuthenticateController {
+export class AuthController {
   constructor(
-    @inject(TokenServiceBindings.TOKEN_SERVICE)
-    public jwtService: JWTService,
+    @repository(UserRepository)
+    public userRepository: UserRepository,
+    @inject(PasswordHasherBindings.PASSWORD_HASHER)
+    public hasher: BcryptHasher,
     @inject(UserServiceBindings.USER_SERVICE)
     public userService: MyUserService,
-    @inject(SecurityBindings.USER, {optional: true})
-    public user: UserProfile,
-    @repository(UsersRepository) protected userRepository: UsersRepository,
-  ) { }
+    @inject(TokenServiceBindings.TOKEN_SERVICE)
+    public jwtService: JWTService,
+  ) {}
 
   @post(CAuthenticate.REGISTER, {
     responses: {
-      '200': AUTHENTICATE,
+      '200': {
+        description: 'Sign up a new user',
+        content: {'application/json': {schema: getModelSchemaRef(User)}},
+      },
     },
   })
-  async register(
+  async signup(
     @requestBody({
       content: {
         'application/json': {
-          schema: getModelSchemaRef(Users, {
+          schema: getModelSchemaRef(User, {
             title: 'NewUser',
             exclude: ['id', 'createdAt', 'updatedAt'],
           }),
         },
       },
     })
-    newUserRequest: Omit<Users, 'id'>,
-  ): Promise<Users> {
+    userData: Omit<User, 'id'>,
+  ) {
     await validateCredentials(
-      _.pick(newUserRequest, ['email', 'password']),
+      _.pick(userData, ['email', 'password']),
       this.userRepository
     );
     try {
-      newUserRequest.password = await new BcryptHasher().hashPassword(newUserRequest.password);
+      userData.password = await new BcryptHasher().hashPassword(userData.password);
       const savedUser = await this.userRepository.create({
-        ...newUserRequest,
+        ...userData,
         'createdAt': new Date(),
         'updatedAt': new Date(),
       });
@@ -95,53 +80,31 @@ export class AuthenticateController {
 
   @post(CAuthenticate.LOGIN, {
     responses: {
-      '200': AUTHENTICATE,
+      '200': {
+        description: 'Token',
+        content: {
+          'application/json': {
+            schema: {
+              type: 'object',
+              properties: {
+                token: {
+                  type: 'string',
+                },
+              },
+            },
+          },
+        },
+      },
     },
   })
   async login(
     @requestBody(CredentialsRequestBody) credentials: Credentials,
   ): Promise<{token: string}> {
     const user = await this.userService.verifyCredentials(credentials);
-    const userProfile = this.userService.convertToUserProfile(user);
+    // eslint-disable-next-line @typescript-eslint/await-thenable
+    const userProfile = await this.userService.convertToUserProfile(user);
     const token = await this.jwtService.generateToken(userProfile);
     return Promise.resolve({token});
   }
 
-  @get(CAuthenticate.ME, {
-    security: OPERATION_SECURITY_SPEC,
-    responses: {
-      '200': {
-        description: 'The current user profile',
-        content: 'application/json',
-      },
-    },
-  })
-  @authenticate('jwt')
-  async currentUser(
-    @inject(SecurityBindings.USER)
-    currentUserProfile: UserProfile,
-  ): Promise<Users> {
-    const userId: string = currentUserProfile[securityId];
-    const userDetail: Users = await this.userRepository.findById(userId);
-    return userDetail;
-  }
-
-  @get(CAuthenticate.LOGOUT, {
-    security: OPERATION_SECURITY_SPEC,
-    responses: {
-      '200': {
-        description: 'Logout',
-        content: 'application/json',
-      },
-    },
-  })
-  @authenticate('jwt')
-  async logout(
-    @inject(SecurityBindings.USER)
-    currentUserProfile: UserProfile,
-  ): Promise<Users> {
-    const userId: string = currentUserProfile[securityId];
-    const userDetail: Users = await this.userRepository.findById(userId);
-    return userDetail;
-  }
 }
