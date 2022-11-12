@@ -1,3 +1,4 @@
+import {inject} from '@loopback/core';
 import {
   Count,
   CountSchema,
@@ -7,7 +8,6 @@ import {
   Where,
 } from '@loopback/repository';
 import {
-  post,
   param,
   get,
   getModelSchemaRef,
@@ -17,15 +17,20 @@ import {
   requestBody,
   response,
 } from '@loopback/rest';
+import {PasswordHasherBindings} from '../keys';
 import {User} from '../models';
 import {UserRepository} from '../repositories';
+import {BcryptHasher} from '../services';
 
 export class UserController {
   constructor(
     @repository(UserRepository)
     public userRepository : UserRepository,
-  ) {}
 
+    @inject(PasswordHasherBindings.PASSWORD_HASHER)
+    public hasher: BcryptHasher,
+
+  ) {}
 
   @get('/users/count')
   @response(200, {
@@ -65,13 +70,17 @@ export class UserController {
     @requestBody({
       content: {
         'application/json': {
-          schema: getModelSchemaRef(User, {partial: true}),
+          schema: getModelSchemaRef(User, {
+            title: 'NewUser',
+            exclude: ['id'],
+          }),
         },
       },
     })
     user: User,
     @param.where(User) where?: Where<User>,
   ): Promise<Count> {
+    user.password = await this.hasher.hashPassword(user.password);
     return this.userRepository.updateAll(user, where);
   }
 
@@ -91,32 +100,24 @@ export class UserController {
     return this.userRepository.findById(id, filter);
   }
 
-  @patch('/users/{id}')
-  @response(204, {
-    description: 'User PATCH success',
-  })
-  async updateById(
-    @param.path.string('id') id: string,
-    @requestBody({
-      content: {
-        'application/json': {
-          schema: getModelSchemaRef(User, {partial: true}),
-        },
-      },
-    })
-    user: User,
-  ): Promise<void> {
-    await this.userRepository.updateById(id, user);
-  }
-
   @put('/users/{id}')
   @response(204, {
     description: 'User PUT success',
   })
   async replaceById(
     @param.path.string('id') id: string,
-    @requestBody() user: User,
+    @requestBody({
+      content: {
+        'application/json': {
+          schema: getModelSchemaRef(User, {
+            title: 'NewUser',
+            exclude: ['id'],
+          }),
+        },
+      },
+    }) user: User,
   ): Promise<void> {
+    user.password = await this.hasher.hashPassword(user.password);
     await this.userRepository.replaceById(id, user);
   }
 

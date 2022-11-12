@@ -69,6 +69,11 @@ export class Task extends Entity {
   @belongsTo(() => User, {name: 'assignee'})
   asignedTo: string;
 
+  @property({
+    type: 'string',
+  })
+  userId?: string;
+
   constructor(data?: Partial<Task>) {
     super(data);
   }

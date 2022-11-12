@@ -3,12 +3,18 @@ import {
 } from '@loopback/repository';
 import {inject} from '@loopback/core';
 import {
+  get,
   post,
   getModelSchemaRef,
   requestBody,
   HttpErrors,
+  getJsonSchemaRef,
 } from '@loopback/rest';
 import * as _ from 'lodash';
+import {SecurityBindings, UserProfile, securityId} from '@loopback/security';
+import {authorize} from '@loopback/authorization';
+import {OPERATION_SECURITY_SPEC} from '@loopback/authentication-jwt';
+import {authenticate, AuthenticationBindings} from '@loopback/authentication';
 
 import {
   PasswordHasherBindings,
@@ -20,7 +26,7 @@ import {
   Credentials,
   UserRepository,
 } from '../repositories';
-import {validateCredentials, JWTService, MyUserService, BcryptHasher} from '../services';
+import {validateCredentials, JWTService, MyUserService, BcryptHasher, basicAuthorization} from '../services';
 import {CredentialsRequestBody} from '../types/credential-schema';
 import {CAuthenticate} from './router';
 
@@ -28,10 +34,16 @@ export class AuthenticateController {
   constructor(
     @repository(UserRepository)
     public userRepository: UserRepository,
+
+    @inject(SecurityBindings.USER, {optional: true})
+    public user: UserProfile,
+
     @inject(PasswordHasherBindings.PASSWORD_HASHER)
     public hasher: BcryptHasher,
+
     @inject(UserServiceBindings.USER_SERVICE)
     public userService: MyUserService,
+
     @inject(TokenServiceBindings.TOKEN_SERVICE)
     public jwtService: JWTService,
   ) {}
@@ -107,5 +119,27 @@ export class AuthenticateController {
     const userProfile = await this.userService.convertToUserProfile(user);
     const token = await this.jwtService.generateToken(userProfile);
     return Promise.resolve({token});
+  }
+
+  @authenticate('jwt')
+  @authorize({allowedRoles: ['user'], voters: [basicAuthorization]})
+  @get(CAuthenticate.ME, {
+    security: OPERATION_SECURITY_SPEC,
+    responses: {
+      '200': {
+        description: 'The current user profile',
+        content: {
+          'application/json': {
+            schema: getJsonSchemaRef(User),
+          },
+        },
+      },
+    },
+  })
+  async me(
+    @inject(AuthenticationBindings.CURRENT_USER)
+    currentUserProfile: UserProfile,
+  ): Promise<User> {
+    return this.userRepository.findById(currentUserProfile[securityId]);
   }
 }

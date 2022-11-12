@@ -1,6 +1,7 @@
 const CAuthenticate = {
   LOGIN: '/login',
   REGISTER: '/register',
+  ME: '/me',
 }
 
 const CProject = {

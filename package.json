@@ -12,6 +12,7 @@
     "node": "14 || 16 || 17 || 18"
   },
   "scripts": {
+    "dev": "nodemon --config nodemon.json",
     "build": "lb-tsc",
     "build:watch": "lb-tsc --watch",
     "lint": "npm run eslint && npm run prettier:check",
@@ -51,6 +52,7 @@
   "dependencies": {
     "@loopback/authentication": "^9.0.4",
     "@loopback/authentication-jwt": "^0.12.4",
+    "@loopback/authorization": "^0.12.4",
     "@loopback/boot": "^5.0.4",
     "@loopback/core": "^4.0.4",
     "@loopback/repository": "^5.0.4",
@@ -59,6 +61,7 @@
     "@loopback/service-proxy": "^5.0.4",
     "dotenv": "^16.0.3",
     "loopback-connector-mongodb": "^5.6.0",
+    "nodemon": "^2.0.20",
     "tslib": "^2.0.0"
   },
   "devDependencies": {

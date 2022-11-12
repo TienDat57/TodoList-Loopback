@@ -36,11 +36,11 @@ export class MyUserService implements UserService<User, Credentials>{
   }
 
   convertToUserProfile(user: User): UserProfile {
-    return {
-      [securityId]: user.id!.toString(),
-      id: user.id,
-      email: user.email,
-    };
+      return {
+        [securityId]: user.id!.toString(),
+        id: user.id,
+        email: user.email,
+      };
   }
 
 }

@@ -1,3 +1,5 @@
+import {AuthenticationBindings} from '@loopback/authentication';
+import {inject} from '@loopback/core';
 import {
   Count,
   CountSchema,
@@ -12,11 +14,11 @@ import {
   get,
   getModelSchemaRef,
   patch,
-  put,
   del,
   requestBody,
   response,
 } from '@loopback/rest';
+import {UserProfile} from '@loopback/security';
 import {Project} from '../models';
 import {ProjectRepository} from '../repositories';
 
@@ -24,6 +26,8 @@ export class ProjectController {
   constructor(
     @repository(ProjectRepository)
     public projectRepository : ProjectRepository,
+
+
   ) {}
 
   @post('/projects')
@@ -32,6 +36,9 @@ export class ProjectController {
     content: {'application/json': {schema: getModelSchemaRef(Project)}},
   })
   async create(
+    @inject(AuthenticationBindings.CURRENT_USER)
+    currentUser: UserProfile,
+
     @requestBody({
       content: {
         'application/json': {
@@ -43,8 +50,10 @@ export class ProjectController {
       },
     })
     project: Omit<Project, 'id'>,
-  ): Promise<Project> {
-    return this.projectRepository.create(project);
+  ): Promise<void> {
+    // create project and project_user with current user as owner
+    await this.projectRepository.create(project);
+    
   }
 
   @get('/projects/count')
@@ -127,17 +136,6 @@ export class ProjectController {
     project: Project,
   ): Promise<void> {
     await this.projectRepository.updateById(id, project);
-  }
-
-  @put('/projects/{id}')
-  @response(204, {
-    description: 'Project PUT success',
-  })
-  async replaceById(
-    @param.path.string('id') id: string,
-    @requestBody() project: Project,
-  ): Promise<void> {
-    await this.projectRepository.replaceById(id, project);
   }
 
   @del('/projects/{id}')
