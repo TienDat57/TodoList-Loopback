@@ -6,11 +6,9 @@ import {
   get,
   getModelSchemaRef,
 } from '@loopback/rest';
-import {
-  Task,
-  Project,
-} from '../models';
+import {Task,Project} from '../models';
 import {TaskRepository} from '../repositories';
+import { CTask } from './router';
 
 export class TaskProjectController {
   constructor(
@@ -18,7 +16,7 @@ export class TaskProjectController {
     public taskRepository: TaskRepository,
   ) { }
 
-  @get('/tasks/{id}/project', {
+  @get(CTask.TASK_BELONGS_TO_PROJECT, {
     responses: {
       '200': {
         description: 'Project belonging to Task',

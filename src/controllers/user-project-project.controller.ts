@@ -8,31 +8,31 @@ import {
 } from '@loopback/rest';
 import {
   ProjectUser,
-  User,
+  Project,
 } from '../models';
 import {ProjectUserRepository} from '../repositories';
 
-export class ProjectUserUserController {
+export class UserProjectProjectController {
   constructor(
     @repository(ProjectUserRepository)
-    public projectUserRepository: ProjectUserRepository,
+    public userProjectRepository: ProjectUserRepository,
   ) { }
 
-  @get('/project-users/{id}/user', {
+  @get('/user-projects/{id}/project', {
     responses: {
       '200': {
-        description: 'User belonging to ProjectUser',
+        description: 'Project belonging to UserProject',
         content: {
           'application/json': {
-            schema: {type: 'array', items: getModelSchemaRef(User)},
+            schema: {type: 'array', items: getModelSchemaRef(Project)},
           },
         },
       },
     },
   })
-  async getUser(
+  async getProject(
     @param.path.string('id') id: typeof ProjectUser.prototype.id,
-  ): Promise<User> {
-    return this.projectUserRepository.user(id);
+  ): Promise<Project> {
+    return this.userProjectRepository.project(id);
   }
 }

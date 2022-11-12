@@ -15,18 +15,16 @@ import {
   post,
   requestBody,
 } from '@loopback/rest';
-import {
-  Project,
-  Task,
-} from '../models';
+import {Project,Task} from '../models';
 import {ProjectRepository} from '../repositories';
+import { CProject } from './router';
 
 export class ProjectTaskController {
   constructor(
     @repository(ProjectRepository) protected projectRepository: ProjectRepository,
   ) { }
 
-  @get('/projects/{id}/tasks', {
+  @get(CProject.TASKS_OF_PROJECT, {
     responses: {
       '200': {
         description: 'Array of Project has many Task',
@@ -45,7 +43,7 @@ export class ProjectTaskController {
     return this.projectRepository.tasks(id).find(filter);
   }
 
-  @post('/projects/{id}/tasks', {
+  @post(CProject.TASKS_OF_PROJECT, {
     responses: {
       '200': {
         description: 'Project model instance',
@@ -70,7 +68,7 @@ export class ProjectTaskController {
     return this.projectRepository.tasks(id).create(task);
   }
 
-  @patch('/projects/{id}/tasks', {
+  @patch(CProject.TASKS_OF_PROJECT, {
     responses: {
       '200': {
         description: 'Project.Task PATCH success count',
@@ -93,7 +91,7 @@ export class ProjectTaskController {
     return this.projectRepository.tasks(id).patch(task, where);
   }
 
-  @del('/projects/{id}/tasks', {
+  @del(CProject.TASKS_OF_PROJECT, {
     responses: {
       '200': {
         description: 'Project.Task DELETE success count',

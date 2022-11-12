@@ -1,7 +1,7 @@
 import {Entity, model, property, belongsTo} from '@loopback/repository';
-import {User} from './user.model';
+import { ETaskStatus } from '../enums';
 import {Project} from './project.model';
-import {ETaskStatus} from '../enum';
+import {User} from './user.model';
 
 @model()
 export class Task extends Entity {
@@ -54,25 +54,25 @@ export class Task extends Entity {
   })
   isDeleted?: boolean;
 
+  @property({
+    type: 'date',
+    default: () => new Date(),
+  })
+  doneTime?: Date;
+
   @belongsTo(() => User, {name: 'creator'})
   createdBy: string;
 
-  @belongsTo(() => User, {name: 'updater'})
-  updatedBy: string;
-
-  @belongsTo(() => Task, {name: 'linked'})
-  linkedTo: string;
-
-  @belongsTo(() => Project)
+  @belongsTo(() => Project, {name: 'ofProject'})
   projectId: string;
 
-  @belongsTo(() => User, {name: 'assignee'})
-  asignedTo: string;
+  @belongsTo(() => User, {name: 'updater'})
+  updatedBy: string;
+  @belongsTo(() => User, {name: 'assignedTo'})
+  userId: string;
 
-  @property({
-    type: 'string',
-  })
-  userId?: string;
+  @belongsTo(() => Task, {name: 'linkedToo'})
+  linkedTo: string;
 
   constructor(data?: Partial<Task>) {
     super(data);

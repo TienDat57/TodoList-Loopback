@@ -1,7 +1,7 @@
 import {Entity, model, property, belongsTo} from '@loopback/repository';
-import {User} from './user.model';
+import { EUserRole } from '../enums';
 import {Project} from './project.model';
-import {EUserRole} from '../enum';
+import {User} from './user.model';
 
 @model()
 export class ProjectUser extends Entity {
@@ -21,19 +21,19 @@ export class ProjectUser extends Entity {
   })
   role?: string;
 
-  @belongsTo(() => User)
-  userId: string;
-
   @belongsTo(() => Project)
   projectId: string;
+
+  @belongsTo(() => User)
+  userId: string;
 
   constructor(data?: Partial<ProjectUser>) {
     super(data);
   }
 }
 
-export interface ProjectUserRelations {
+export interface UserProjectRelations {
   // describe navigational properties here
 }
 
-export type ProjectUserWithRelations = ProjectUser & ProjectUserRelations;
+export type UserProjectWithRelations = ProjectUser & UserProjectRelations;

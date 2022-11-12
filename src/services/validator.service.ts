@@ -1,6 +1,6 @@
-
-import { HttpErrors } from '@loopback/rest';
-import { Credentials, UserRepository } from '../repositories/user.repository';
+import {HttpErrors} from '@loopback/rest';
+import {Credentials} from './Credentials';
+import { UserRepository } from '../repositories';
 
 export async function validateCredentials(credentials: Credentials, userRepository: UserRepository) {
   const foundUser = await userRepository.findOne({

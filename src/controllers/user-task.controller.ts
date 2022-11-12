@@ -15,18 +15,16 @@ import {
   post,
   requestBody,
 } from '@loopback/rest';
-import {
-  User,
-  Task,
-} from '../models';
+import {User,Task} from '../models';
 import {UserRepository} from '../repositories';
+import { CTask, CUser } from './router';
 
 export class UserTaskController {
   constructor(
     @repository(UserRepository) protected userRepository: UserRepository,
   ) { }
 
-  @get('/users/{id}/tasks', {
+  @get(CUser.USER_TASKS_IN_USER, {
     responses: {
       '200': {
         description: 'Array of User has many Task',
@@ -45,7 +43,7 @@ export class UserTaskController {
     return this.userRepository.tasks(id).find(filter);
   }
 
-  @post('/users/{id}/tasks', {
+  @post(CUser.USER_TASKS_IN_USER, {
     responses: {
       '200': {
         description: 'User model instance',
@@ -70,7 +68,7 @@ export class UserTaskController {
     return this.userRepository.tasks(id).create(task);
   }
 
-  @patch('/users/{id}/tasks', {
+  @patch(CUser.USER_TASKS_IN_USER, {
     responses: {
       '200': {
         description: 'User.Task PATCH success count',
@@ -93,7 +91,7 @@ export class UserTaskController {
     return this.userRepository.tasks(id).patch(task, where);
   }
 
-  @del('/users/{id}/tasks', {
+  @del(CUser.USER_TASKS_IN_USER, {
     responses: {
       '200': {
         description: 'User.Task DELETE success count',

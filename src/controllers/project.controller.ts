@@ -1,5 +1,3 @@
-import {AuthenticationBindings} from '@loopback/authentication';
-import {inject} from '@loopback/core';
 import {
   Count,
   CountSchema,
@@ -14,31 +12,39 @@ import {
   get,
   getModelSchemaRef,
   patch,
+  put,
   del,
   requestBody,
   response,
 } from '@loopback/rest';
-import {UserProfile} from '@loopback/security';
 import {Project} from '../models';
-import {ProjectRepository} from '../repositories';
+import {ProjectRepository, ProjectUserRepository} from '../repositories';
+import {SecurityBindings, securityId} from '@loopback/security';
+import {MyUserProfile} from '../services/Credentials';
+import {inject} from '@loopback/core';
+import set from 'lodash/set';
+import {authenticate} from '@loopback/authentication';
+import { CProject } from './router';
+import { EUserRole } from '../enums';
 
+@authenticate('jwt')
 export class ProjectController {
   constructor(
     @repository(ProjectRepository)
     public projectRepository : ProjectRepository,
 
-
+    @repository(ProjectUserRepository)
+    public projectUserRepository : ProjectUserRepository,
   ) {}
 
-  @post('/projects')
+  @post(CProject.PROJECTS)
   @response(200, {
     description: 'Project model instance',
     content: {'application/json': {schema: getModelSchemaRef(Project)}},
   })
   async create(
-    @inject(AuthenticationBindings.CURRENT_USER)
-    currentUser: UserProfile,
-
+    @inject(SecurityBindings.USER)
+    currentUserProfile: MyUserProfile,
     @requestBody({
       content: {
         'application/json': {
@@ -51,12 +57,20 @@ export class ProjectController {
     })
     project: Omit<Project, 'id'>,
   ): Promise<void> {
-    // create project and project_user with current user as owner
-    await this.projectRepository.create(project);
-    
+    const userId: string = currentUserProfile?.id;
+    project.createdBy = userId;
+    project.updatedBy = userId;
+    const createdProject = await this.projectRepository.create(project)
+    const projectId = createdProject.id;
+    const projectUser  = {
+      userId,
+      projectId,
+      role: EUserRole.ADMIN
+    };
+    await this.projectUserRepository.create(projectUser);
   }
 
-  @get('/projects/count')
+  @get(CProject.COUNT_PROJECTS)
   @response(200, {
     description: 'Project model count',
     content: {'application/json': {schema: CountSchema}},
@@ -67,7 +81,7 @@ export class ProjectController {
     return this.projectRepository.count(where);
   }
 
-  @get('/projects')
+  @get(CProject.PROJECTS)
   @response(200, {
     description: 'Array of Project model instances',
     content: {
@@ -85,12 +99,14 @@ export class ProjectController {
     return this.projectRepository.find(filter);
   }
 
-  @patch('/projects')
+  @patch(CProject.PROJECTS)
   @response(200, {
     description: 'Project PATCH success count',
     content: {'application/json': {schema: CountSchema}},
   })
   async updateAll(
+    @inject(SecurityBindings.USER)
+    currentUserProfile: MyUserProfile,
     @requestBody({
       content: {
         'application/json': {
@@ -101,10 +117,13 @@ export class ProjectController {
     project: Project,
     @param.where(Project) where?: Where<Project>,
   ): Promise<Count> {
+    const userId: string = currentUserProfile?.id;
+    project.updatedBy = userId;
+    set(project, 'updatedAt', new Date());
     return this.projectRepository.updateAll(project, where);
   }
 
-  @get('/projects/{id}')
+  @get(CProject.PROJECTS_BY_ID)
   @response(200, {
     description: 'Project model instance',
     content: {
@@ -120,11 +139,13 @@ export class ProjectController {
     return this.projectRepository.findById(id, filter);
   }
 
-  @patch('/projects/{id}')
+  @patch(CProject.PROJECTS_BY_ID)
   @response(204, {
     description: 'Project PATCH success',
   })
   async updateById(
+    @inject(SecurityBindings.USER)
+    currentUserProfile: MyUserProfile,
     @param.path.string('id') id: string,
     @requestBody({
       content: {
@@ -135,10 +156,29 @@ export class ProjectController {
     })
     project: Project,
   ): Promise<void> {
+    const userId: string = currentUserProfile?.id;
+    set(project, 'updatedBy', userId);
+    set(project, 'updatedAt', new Date());
     await this.projectRepository.updateById(id, project);
   }
 
-  @del('/projects/{id}')
+  @put(CProject.PROJECTS_BY_ID)
+  @response(204, {
+    description: 'Project PUT success',
+  })
+  async replaceById(
+    @inject(SecurityBindings.USER)
+    currentUserProfile: MyUserProfile,
+    @param.path.string('id') id: string,
+    @requestBody() project: Project,
+  ): Promise<void> {
+    const userId: string = currentUserProfile?.id;
+    set(project, 'updatedBy', userId);
+    set(project, 'updatedAt', new Date());
+    await this.projectRepository.replaceById(id, project);
+  }
+
+  @del(CProject.PROJECTS_BY_ID)
   @response(204, {
     description: 'Project DELETE success',
   })

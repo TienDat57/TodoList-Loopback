@@ -6,10 +6,9 @@ import {
   get,
   getModelSchemaRef,
 } from '@loopback/rest';
-import {
-  Task,
-} from '../models';
+import {Task} from '../models';
 import {TaskRepository} from '../repositories';
+import { CTask } from './router';
 
 export class TaskTaskController {
   constructor(
@@ -17,7 +16,7 @@ export class TaskTaskController {
     public taskRepository: TaskRepository,
   ) { }
 
-  @get('/tasks/{id}/task', {
+  @get(CTask.TASK_BELONGS_TO_TASKS, {
     responses: {
       '200': {
         description: 'Task belonging to Task',
@@ -32,6 +31,6 @@ export class TaskTaskController {
   async getTask(
     @param.path.string('id') id: typeof Task.prototype.id,
   ): Promise<Task> {
-    return this.taskRepository.linked(id);
+    return this.taskRepository.linkedToTask(id);
   }
 }
