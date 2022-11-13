@@ -1,4 +1,6 @@
 import {ApplicationConfig, TodoAppApplication} from './application';
+import {TaskRepository} from './repositories';
+import {Cron} from './services';
 
 export * from './application';
 
@@ -10,6 +12,10 @@ export async function main(options: ApplicationConfig = {}) {
   const url = app.restServer.url;
   console.log(`Server is running at ${url}`);
   console.log(`Try ${url}/ping`);
+
+  const taskRepository = await app.getRepository(TaskRepository);
+  const cron = new Cron(taskRepository);
+  await cron.start();
 
   return app;
 }

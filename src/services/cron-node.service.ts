@@ -1,6 +1,6 @@
-import { repository } from '@loopback/repository';
-import { TaskRepository } from '../repositories';
-import { ETaskStatus } from '../enums';
+import {TaskRepository} from '../repositories';
+import {repository} from '@loopback/repository';
+import {ETaskStatus} from '../enums';
 const cron = require('node-cron');
 
 export class Cron {
@@ -23,6 +23,7 @@ export class Cron {
    }
 
    private async cleanDoneTasks() {
+      console.log('Start clean done tasks');
       const oneDay = 10000;
       const tasks = await this.taskRepository.find({
          where: {

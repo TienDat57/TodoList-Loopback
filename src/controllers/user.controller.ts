@@ -4,41 +4,33 @@ import {
   Filter,
   FilterExcludingWhere,
   repository,
-  Where,
+  Where
 } from '@loopback/repository';
 import {
-  post,
-  param,
-  get,
-  getModelSchemaRef,
-  patch,
-  put,
-  HttpErrors,
-  del,
-  requestBody,
-  response,
+  del, get,
+  getModelSchemaRef, param, patch,
+  put, requestBody,
+  response
 } from '@loopback/rest';
 
 import {
   PasswordHasherBindings
 } from '../keys';
 
+import {inject} from '@loopback/core';
 import {User} from '../models';
 import {UserRepository} from '../repositories';
-import {inject} from '@loopback/core';
-import {pick} from 'lodash';
-import {BcryptHasher} from '../services/hash-password';
-import {validateCredentials} from '../services/validator.service';
+import {BcryptHasher} from '../services/hash.password';
 
 export class UserController {
   constructor(
     @repository(UserRepository)
-    public userRepository : UserRepository,
+    public userRepository: UserRepository,
 
     @inject(PasswordHasherBindings.PASSWORD_HASHER)
     public hasher: BcryptHasher,
 
-  ) {}
+  ) { }
 
   @get('/users/count')
   @response(200, {

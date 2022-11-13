@@ -1,8 +1,8 @@
 import {TokenService, UserService} from '@loopback/authentication';
 import {BindingKey} from '@loopback/core';
 import {User} from './models';
-import {PasswordHasher} from './services/hash-password';
 import {Credentials} from './services/Credentials';
+import {PasswordHasher} from './services/hash.password';
 
 export namespace TokenServiceBindings {
   export const TOKEN_SECRET = BindingKey.create<string>(

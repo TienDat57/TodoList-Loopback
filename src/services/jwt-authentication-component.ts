@@ -9,17 +9,17 @@ import {
   Binding,
   Component,
   CoreBindings,
-  inject,
+  inject
 } from '@loopback/core';
-import {MyUserService} from './my-user.service';
-import {BcryptHasher} from './hash-password';
-import {JWTStrategy} from './jwt-authenticate-strategy';
-import {JWTService} from './jwt.service';
 import {
   PasswordHasherBindings,
   TokenServiceBindings,
-  UserServiceBindings,
+  UserServiceBindings
 } from '../keys';
+import {BcryptHasher} from './hash.password';
+import {JWTStrategy} from './jwt-authenticate-strategy';
+import {JWTService} from './jwt.service';
+import {MyUserService} from './user.service';
 
 export class MyJWTAuthenticationComponent implements Component {
   bindings: Binding[] = [

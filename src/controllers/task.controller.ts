@@ -65,6 +65,7 @@ export class TaskController {
     set(task, 'createdBy', userId);
     set(task, 'updatedBy', userId);
     set(task, 'status', ETaskStatus.TODO);
+    set(task, 'isDeleted', false);
     return this.taskRepository.create(task);
   }
 
@@ -131,11 +132,6 @@ export class TaskController {
     set(task, 'updatedBy', userId);
     set(task, 'updatedAt', new Date());
     await this.taskRepository.updateAll(task, where);
-    if (task?.status === ETaskStatus.DONE) {
-      setTimeout(() => {
-        this.taskRepository.deleteById(task?.id)
-      }, 10000); //86400000
-    }
   }
 
   @get(CTask.TASKS_BY_ID)
@@ -177,7 +173,10 @@ export class TaskController {
     @requestBody({
       content: {
         'application/json': {
-          schema: getModelSchemaRef(Task, {partial: true}),
+          schema: getModelSchemaRef(Task, {
+            title: 'UpdateTask',
+            exclude: ['id', 'updatedAt', 'updatedBy'],
+          }),
         },
       },
     })
@@ -186,6 +185,9 @@ export class TaskController {
     const userId: string = currentUserProfile?.id;
     set(task, 'updatedBy', userId);
     set(task, 'updatedAt', new Date());
+    if (task?.status === ETaskStatus.DONE) {
+      set(task, 'doneTime', new Date());
+    }
     await this.taskRepository.updateById(id, task);
   }
 

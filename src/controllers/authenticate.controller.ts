@@ -13,7 +13,7 @@ import {SecurityBindings, securityId, UserProfile} from '@loopback/security';
 import {pick} from 'lodash';
 import {User} from '../models';
 import {UserRepository} from '../repositories';
-import {BcryptHasher} from '../services/hash-password';
+import {BcryptHasher} from '../services/hash.password';
 import {
   Credentials,
   JWTService,
@@ -71,7 +71,7 @@ export class AuthController {
     const newUser = await this.userRepository.create({
       email: userData.email,
       password: hashedPassword,
-      
+
     });
     return newUser;
   }

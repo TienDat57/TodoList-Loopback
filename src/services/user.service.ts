@@ -1,4 +1,3 @@
-import {UserRepository} from './../repositories/user.repository';
 import {UserService} from '@loopback/authentication';
 import {inject} from '@loopback/core';
 import {repository} from '@loopback/repository';
@@ -7,11 +6,12 @@ import {securityId} from '@loopback/security';
 import {JWTService} from '.';
 import {
   PasswordHasherBindings,
-  TokenServiceBindings,
+  TokenServiceBindings
 } from '../keys';
-import {Credentials, MyUserProfile} from './Credentials';
-import {BcryptHasher} from './hash-password';
 import {User} from '../models/user.model';
+import {UserRepository} from '../repositories/user.repository';
+import {Credentials, MyUserProfile} from './Credentials';
+import {BcryptHasher} from './hash.password';
 
 export class MyUserService implements UserService<User, Credentials> {
   constructor(
@@ -21,7 +21,7 @@ export class MyUserService implements UserService<User, Credentials> {
     public jwtService: JWTService,
     @inject(PasswordHasherBindings.PASSWORD_HASHER)
     public hasher: BcryptHasher,
-  ) {}
+  ) { }
 
   async verifyCredentials(credentials: Credentials): Promise<User> {
     const foundUser = await this.userRepository.findOne({
