@@ -1,3 +1,4 @@
+import {authenticate} from '@loopback/authentication';
 import {
   Count,
   CountSchema,
@@ -17,8 +18,9 @@ import {
 } from '@loopback/rest';
 import {User,Task} from '../models';
 import {UserRepository} from '../repositories';
-import { CTask, CUser } from './router';
+import { CUser } from './router';
 
+@authenticate('jwt')
 export class UserTaskController {
   constructor(
     @repository(UserRepository) protected userRepository: UserRepository,

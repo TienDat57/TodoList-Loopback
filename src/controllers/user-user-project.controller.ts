@@ -1,3 +1,4 @@
+import {authenticate} from '@loopback/authentication';
 import {
   Count,
   CountSchema,
@@ -19,6 +20,7 @@ import {User,ProjectUser} from '../models';
 import {UserRepository} from '../repositories';
 import { CUser } from './router';
 
+@authenticate('jwt')
 export class UserUserProjectController {
   constructor(
     @repository(UserRepository) protected userRepository: UserRepository,
