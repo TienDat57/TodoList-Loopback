@@ -6,9 +6,9 @@ require('dotenv').config();
 const config = {
   name: 'db',
   connector: 'mongodb',
-  url: process.env.DB_LOCALHOST,
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
+  url: 'mongodb+srv://TienDat57:Tiendat572002@trelloclone.gzzswit.mongodb.net/Trello',
+  user: process.env.DB_USER || 'TienDat57',
+  password: process.env.DB_PASSWORD || 'Tiendat572002',
   port: process.env.PORT ?? 3001,
 };
 
