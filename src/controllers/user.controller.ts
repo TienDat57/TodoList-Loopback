@@ -21,7 +21,9 @@ import {inject} from '@loopback/core';
 import {User} from '../models';
 import {UserRepository} from '../repositories';
 import {BcryptHasher} from '../services/hash.password';
+import {authenticate} from '@loopback/authentication';
 
+@authenticate('jwt')
 export class UserController {
   constructor(
     @repository(UserRepository)

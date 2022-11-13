@@ -64,3 +64,5 @@ typings/
 *.tsbuildinfo
 
 env
+
+package-lock.json
