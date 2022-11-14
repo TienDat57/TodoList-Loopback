@@ -6,6 +6,7 @@ import {
   requestBody,
 } from '@loopback/rest';
 import {pick} from 'lodash';
+
 import {User} from '../models';
 import {UserRepository} from '../repositories';
 import {BcryptHasher} from '../services/hash.password';
@@ -53,7 +54,7 @@ export class AuthController {
       content: {
         'application/json': {
           schema: getModelSchemaRef(User, {
-            exclude: ['id'],
+            exclude: ['id', 'createdAt', 'updatedAt'],
           }),
         },
       },
@@ -66,7 +67,6 @@ export class AuthController {
     const newUser = await this.userRepository.create({
       email: userData.email,
       password: hashedPassword,
-
     });
     return newUser;
   }
